@@ -30,7 +30,16 @@ to specify intervals for ongoing health assessments. With additional
 flags for customization, users can tailor the command to meet various
 monitoring needs, from simple uptime checks to detailed performance
 analysis.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		version, _ := cmd.Flags().GetBool("version")
+		if version {
+			printVersion()
+			os.Exit(0)
+		}
+	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		silent, _ = cmd.Flags().GetBool("silent")
+		verbose, _ := cmd.Flags().GetBool("verbose")
 		l = logger.New(logfile, silent, verbose)
 	},
 }
@@ -53,5 +62,5 @@ func init() {
 		&silent, "s", false, "Silent mode")
 	rootCmd.PersistentFlags().BoolVar(
 		&verbose, "v", false, "Verbose mode")
-	rootCmd.Flags().BoolVarP(&versionFlag, "version", "e", false, "Print version")
+	rootCmd.Flags().BoolVar(&versionFlag, "version", false, "Print version")
 }
