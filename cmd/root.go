@@ -1,8 +1,12 @@
 package cmd
 
 import (
+	"context"
+	"fmt"
 	"log/slog"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/spf13/cobra"
 	"go-cli-app2/logger"
@@ -45,6 +49,13 @@ analysis.`,
 }
 
 func Execute() {
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
+
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 	err := rootCmd.Execute()
 	if err != nil {
 		os.Exit(1)

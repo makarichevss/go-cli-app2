@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"context"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -15,17 +16,18 @@ var monitorCmd = &cobra.Command{
 	Short: "Monitor the health of specified URL(s) over time",
 	Long:  `Continuously monitors the health of the specified URL(s) at the specified interval`,
 	Run: func(cmd *cobra.Command, args []string) {
-		monitorURL(args)
+		ctx := cmd.Context()
+		monitorURL(ctx, args)
 	},
 }
 
-func monitorURL(urls []string) {
+func monitorURL(ctx context.Context, urls []string) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
 
 	for range ticker.C {
 		for _, url := range urls {
-			checkURL(url, threshold, retries)
+			checkURL(ctx, url, threshold, retries)
 		}
 	}
 }
