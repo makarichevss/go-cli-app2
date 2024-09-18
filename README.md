@@ -1,1 +1,1 @@
-First CLI app using Cobra 
+Second CLI app using Cobra 
