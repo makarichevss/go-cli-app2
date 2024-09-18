@@ -1,17 +1,18 @@
+/*
+Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+*/
 package cmd
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/spf13/cobra"
 )
 
 var (
 	version   = "dev"
-	buildDate = time.Now().Format("2006-01-02")
+	buildDate = ""
 )
-
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "Print version",
@@ -25,5 +26,5 @@ func init() {
 }
 
 func printVersion() {
-	fmt.Printf("Version: %s\nBuild Date: %s\n", version, buildDate)
+	fmt.Printf("Version %s\nBuild Date: %s\n", version, buildDate)
 }

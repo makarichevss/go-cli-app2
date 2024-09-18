@@ -7,13 +7,14 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/spf13/cobra"
 	"go-cli-app2/logger"
 )
 
 var (
-	logfile     string
+	logFile     string
 	l           *slog.Logger
 	threshold   float64
 	retries     int
@@ -33,33 +34,20 @@ immediate, one-off checks and continuous monitoring, allowing users
 to specify intervals for ongoing health assessments. With additional
 flags for customization, users can tailor the command to meet various
 monitoring needs, from simple uptime checks to detailed performance
-analysis.`,
+analysis."`,
 	Run: func(cmd *cobra.Command, args []string) {
-		version, _ := cmd.Flags().GetBool("version")
-		if version {
+		versionFlag, _ := cmd.Flags().GetBool("version")
+		if versionFlag {
 			printVersion()
 			os.Exit(0)
 		}
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		silent, _ = cmd.Flags().GetBool("silent")
+		time.Local = time.UTC
 		verbose, _ := cmd.Flags().GetBool("verbose")
-		l = logger.New(logfile, silent, verbose)
+		silent, _ := cmd.Flags().GetBool("silent")
+		l = logger.New(logFile, verbose, silent)
 	},
-}
-
-func init() {
-	rootCmd.PersistentFlags().StringVar(
-		&logfile, "logfile", "healthcheck.log", "log file path")
-	rootCmd.PersistentFlags().Float64Var(
-		&threshold, "threshold", 0.5, "Threshold for slow response")
-	rootCmd.PersistentFlags().IntVar(
-		&retries, "r", 3, "Number of retries")
-	rootCmd.PersistentFlags().BoolVar(
-		&silent, "s", false, "Silent mode")
-	rootCmd.PersistentFlags().BoolVar(
-		&verbose, "v", false, "Verbose mode")
-	rootCmd.Flags().BoolVar(&versionFlag, "version", false, "Print version")
 }
 
 func Execute() {
@@ -70,4 +58,14 @@ func Execute() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+}
+
+func init() {
+	rootCmd.PersistentFlags().StringVar(&logFile, "logfile", "healthcheck.log", "File to log output to")
+	rootCmd.PersistentFlags().Float64Var(&threshold, "threshold", 0.5, "Threshold value for considering a response to be too slow (in seconds)")
+	rootCmd.PersistentFlags().IntVar(&retries, "retries", 3, "Number of retries for a failed request")
+	rootCmd.PersistentFlags().BoolVar(&silent, "silent", false, "Run in silent mode without stdout output")
+	rootCmd.PersistentFlags().BoolVar(&verbose, "verbose", false, "Run in verbose mode.  Overrides silent mode")
+	rootCmd.Flags().BoolVar(&versionFlag, "version", false, "Print version")
+
 }
