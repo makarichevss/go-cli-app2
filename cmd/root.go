@@ -48,20 +48,6 @@ analysis.`,
 	},
 }
 
-func Execute() {
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-	defer cancel()
-
-	if err := rootCmd.ExecuteContext(ctx); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
-	}
-}
-
 func init() {
 	rootCmd.PersistentFlags().StringVar(
 		&logfile, "logfile", "healthcheck.log", "log file path")
@@ -74,4 +60,14 @@ func init() {
 	rootCmd.PersistentFlags().BoolVar(
 		&verbose, "v", false, "Verbose mode")
 	rootCmd.Flags().BoolVar(&versionFlag, "version", false, "Print version")
+}
+
+func Execute() {
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer cancel()
+
+	if err := rootCmd.ExecuteContext(ctx); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 }

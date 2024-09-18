@@ -20,10 +20,10 @@ var versionCmd = &cobra.Command{
 	},
 }
 
-func printVersion() {
-	fmt.Printf("Version: %s\nBuild Date: %s\n", version, buildDate)
-}
-
 func init() {
 	rootCmd.AddCommand(versionCmd)
+}
+
+func printVersion() {
+	fmt.Printf("Version: %s\nBuild Date: %s\n", version, buildDate)
 }

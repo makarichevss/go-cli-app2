@@ -21,6 +21,11 @@ var monitorCmd = &cobra.Command{
 	},
 }
 
+func init() {
+	monitorCmd.Flags().DurationVar(&interval, "interval", 2*time.Second, "Interval between checks")
+	rootCmd.AddCommand(monitorCmd)
+}
+
 func monitorURL(ctx context.Context, urls []string) {
 	ticker := time.NewTicker(interval)
 	defer ticker.Stop()
@@ -30,9 +35,4 @@ func monitorURL(ctx context.Context, urls []string) {
 			checkURL(ctx, url, threshold, retries)
 		}
 	}
-}
-
-func init() {
-	monitorCmd.Flags().DurationVar(&interval, "interval", 2*time.Second, "Interval between checks")
-	rootCmd.AddCommand(monitorCmd)
 }
